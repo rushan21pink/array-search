@@ -15,15 +15,17 @@
                             <v-row>
                                 <v-col cols="6">
                                     <v-text-field
+                                        :disabled="loading"
                                         v-model="search"
                                         label="Search"
                                         placeholder="Enter a name"
                                     ></v-text-field>
                                 </v-col>
+
                                 <v-col cols="6">
                                     <v-text-field
                                         disabled
-                                        :value="searchResult.length"
+                                        :value="searchValue"
                                     ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -37,12 +39,12 @@
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn
-                            color="primary"
+                            :color="colorBtn"
                             text
-                            @click="loadArr"
+                            @click="loadArray"
                             :loading="loading"
                             :disabled="loading">
-                            Generate data
+                            {{showBtn ? 'Generate data' : 'data generated'}}
                         </v-btn>
                     </v-card-actions>
                 </v-card>
@@ -65,25 +67,30 @@ export default {
         search: '',
     }),
 
-    watch: {
-        search(val) {
-            this.$store.dispatch('localStorage/loadSearchResult', val)
-        }
+    watch:{
+      search(val, oldVal){
+          if(!!oldVal && val.includes(oldVal))
+              this.getSearchByOldValue(val)
+          else
+            this.getSearchResult(val)
+      }
     },
 
     computed: {
-        loading() {
-            return this.$store.getters['localStorage/loading']
+        ...mapGetters('localStorage', ['loading', 'searchResult', 'loadingSearch', 'showBtn']),
+
+        searchValue(){
+            return this.loadingSearch ? 'Loading...' : this.searchResult.length
         },
-        searchResult(){
-            return this.$store.getters['localStorage/searchResult']
+
+        colorBtn(){
+            return this.showBtn ? 'primary' : 'success'
         }
+
     },
 
     methods: {
-        loadArr() {
-            this.$store.dispatch('localStorage/loadArray')
-        }
+        ...mapActions('localStorage', ['loadArray', 'getSearchByOldValue', 'getSearchResult']),
     }
 };
 </script>

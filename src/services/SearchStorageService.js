@@ -10,10 +10,9 @@ export const SearchService = {
         let arr = [];
         for(let i = 0; i < 100; i++){
 
-            for(let j = 0; j < 500; j ++){
+            for(let j = 0; j < 900; j ++){
                 arr.push(getRandomWord())
             }
-            console.log(i)
             setTimeout(() => {}, 0)
         }
         LocalStorageService.setItem(STORAGE_KEY, arr)
